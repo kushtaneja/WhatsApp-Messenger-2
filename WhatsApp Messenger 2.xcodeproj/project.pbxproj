@@ -57,7 +57,12 @@
 			isa = PBXGroup;
 			children = (
 				43E32622218CEEAE0028E666 /* AppDelegate.swift */,
-				43E32624218CEEAE0028E666 /* ViewController.swift */,
+				43E3263A218CF0050028E666 /* Modals */,
+				43E3263B218CF0200028E666 /* Views */,
+				43E32639218CEFF50028E666 /* ViewControllers */,
+				43E3263C218CF0300028E666 /* Servies */,
+				43E3263D218CF0350028E666 /* Supporting files */,
+				43E3263E218CF04C0028E666 /* Resources */,
 				43E32626218CEEAE0028E666 /* Main.storyboard */,
 				43E3262C218CEEB40028E666 /* Assets.xcassets */,
 				43E3262E218CEEB40028E666 /* LaunchScreen.storyboard */,
@@ -65,6 +70,49 @@
 				43E32629218CEEAE0028E666 /* WhatsApp_Messenger_2.xcdatamodeld */,
 			);
 			path = "WhatsApp Messenger 2";
+			sourceTree = "<group>";
+		};
+		43E32639218CEFF50028E666 /* ViewControllers */ = {
+			isa = PBXGroup;
+			children = (
+				43E32624218CEEAE0028E666 /* ViewController.swift */,
+			);
+			path = ViewControllers;
+			sourceTree = "<group>";
+		};
+		43E3263A218CF0050028E666 /* Modals */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Modals;
+			sourceTree = "<group>";
+		};
+		43E3263B218CF0200028E666 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		43E3263C218CF0300028E666 /* Servies */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Servies;
+			sourceTree = "<group>";
+		};
+		43E3263D218CF0350028E666 /* Supporting files */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = "Supporting files";
+			sourceTree = "<group>";
+		};
+		43E3263E218CF04C0028E666 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
