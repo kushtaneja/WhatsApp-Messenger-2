@@ -10,13 +10,34 @@ import RealmSwift
 
 final class ChatRoom: Object {
   @objc dynamic var name: String!
-  @objc dynamic var cookies: [HTTPCookie]!
+  @objc dynamic var id = 0
 
+  override class func primaryKey() -> String? {
+    return "id"
+  }
 
-  convenience init(accountName: String, browserCookies: [HTTPCookie]) {
+//  let cookies = List<ChatCookie>()
+
+  convenience init(accountName: String, id: Int, browserCookies: [HTTPCookie]) {
     self.init()
 
+    self.id = id
     name = accountName
-    cookies = browserCookies
+
+//    for cookie in browserCookies {
+//      let cookieObject = ChatCookie(browserCookie: cookie)
+//      cookies.append(cookieObject)
+//    }
   }
 }
+
+
+//final class ChatCookie: Object {
+//  @objc dynamic var cookie: HTTPCookie!
+//
+//  convenience init(browserCookie: HTTPCookie) {
+//    self.init()
+//
+//    cookie = browserCookie
+//  }
+//}

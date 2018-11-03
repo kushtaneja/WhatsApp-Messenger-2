@@ -8,7 +8,15 @@
 
 import UIKit
 import Firebase
+import RealmSwift
 
+fileprivate struct Defaults {
+  static let navBarHeight: CGFloat = 140
+  static let gADBannerHeight: CGFloat = 100
+  static let defaultSpacing: CGFloat = 4.0
+  static let placeholderText: String = "Add as many WhatsApp accounts\n you want. It's simple and free."
+
+}
 
 class ChatListViewController: UIViewController {
 
@@ -24,9 +32,30 @@ class ChatListViewController: UIViewController {
     UIView(frame: CGRect.zero)
   }()
 
+  var placeholderLabel: UILabel! = {
+    UILabel(frame: CGRect.zero)
+  }()
+
   var createButton: UIButton! = {
     UIButton(frame: CGRect.zero)
   }()
+
+  let nameInputAlert: UIAlertController! = {
+    UIAlertController(title: "Add Account", message: "Input WhatsApp Name", preferredStyle: UIAlertController.Style.alert)
+  }()
+
+  var addBarButtonItem: UIBarButtonItem?
+
+  var chatRooms: [ChatRoom] {
+    let realm = try! Realm()
+
+    var rooms = [ChatRoom]()
+
+    for room in realm.objects(ChatRoom.self) {
+        rooms.append(room)
+    }
+    return rooms
+  }
 
   override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
     super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -37,19 +66,51 @@ class ChatListViewController: UIViewController {
   }
 
   override func viewDidLoad() {
-        super.viewDidLoad()
+    super.viewDidLoad()
 
+    addNavItems()
     addBannerView(bannerView: self.bannerView)
-    }
+    initaliseTableView()
+    createNameInputAlertView()
+    addPlaceholderView()
+  }
+
+  override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+
+    validatePlaceHolderView()
+  }
+
+  func addPlaceholderView() {
+    placeholderView.translatesAutoresizingMaskIntoConstraints = false
+    view.addSubview(placeholderView)
+    placeholderView.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+    placeholderView.centerYAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+    placeholderView.leadingAnchor.constraint(equalTo: placeholderView.leadingAnchor, constant: 0.0).isActive = true
+    placeholderView.trailingAnchor.constraint(equalTo: placeholderView.trailingAnchor, constant: 0.0).isActive = true
+    placeholderView.heightAnchor.constraint(equalToConstant: 150).isActive = true
+
+
+    addPlaceholderLabel()
+    addCreateButton()
+  }
+
+  func validatePlaceHolderView() {
+      placeholderView.isHidden = chatRooms.count != 0
+      tableView.isHidden = chatRooms.count == 0
+  }
 
   func addBannerView(bannerView: GADBannerView) {
     bannerView.translatesAutoresizingMaskIntoConstraints = false
-    bannerView.backgroundColor = .black
     view.addSubview(bannerView)
-    bannerView.topAnchor.constraint(equalTo: view.topAnchor, constant: 64).isActive = true
-    bannerView.heightAnchor.constraint(equalToConstant: 100).isActive = true
-    bannerView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-    bannerView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    bannerView.topAnchor.constraint(equalTo: view.topAnchor, constant: Defaults.navBarHeight + 2*Defaults.defaultSpacing).isActive = true
+    bannerView.heightAnchor.constraint(equalToConstant: Defaults.gADBannerHeight).isActive = true
+    bannerView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16.0).isActive = true
+    bannerView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16.0).isActive = true
+
+    bannerView.layer.cornerRadius = 16.0
+    bannerView.layer.masksToBounds = true
+
 
     bannerView.adUnitID = "ca-app-pub-3940256099942544/2934735716"
     bannerView.rootViewController = self
@@ -59,8 +120,132 @@ class ChatListViewController: UIViewController {
     request.testDevices = [kGADSimulatorID]
     bannerView.load(request)
   }
+
+  func addNavItems() {
+    self.title = "WhatsApp"
+    self.navigationController?.title = "WhatsApp"
+    self.navigationController?.navigationBar.prefersLargeTitles = true
+
+    addBarButtonItem = UIBarButtonItem(barButtonSystemItem: .add
+      , target: self, action: #selector(didTapCreateButton))
+    navigationItem.rightBarButtonItem = addBarButtonItem
+  }
+
+  func addPlaceholderLabel() {
+    placeholderLabel.translatesAutoresizingMaskIntoConstraints = false
+    let attributedString = NSMutableAttributedString(string: Defaults.placeholderText)
+
+    // *** Create instance of `NSMutableParagraphStyle`
+    let paragraphStyle = NSMutableParagraphStyle()
+
+    // *** set LineSpacing property in points ***
+    paragraphStyle.lineSpacing = 2 // Whatever line spacing you want in points
+
+    // *** Apply attribute to string ***
+    attributedString.addAttribute(NSAttributedString.Key.paragraphStyle, value:paragraphStyle, range:NSMakeRange(0, attributedString.length))
+
+    // *** Set Attributed String to your label ***
+    placeholderLabel.attributedText = attributedString
+    placeholderLabel.numberOfLines = 0
+
+    placeholderLabel.textColor = UIColor.lightGray
+    placeholderLabel.font = UIFont.systemFont(ofSize: 20, weight: .semibold)
+    placeholderLabel.textAlignment = .center
+
+    placeholderView.addSubview(placeholderLabel)
+
+    placeholderLabel.centerXAnchor.constraint(equalTo: placeholderView.centerXAnchor).isActive = true
+    placeholderLabel.topAnchor.constraint(equalTo: placeholderView.topAnchor).isActive = true
+    placeholderLabel.leadingAnchor.constraint(equalTo: placeholderView.leadingAnchor, constant: 16.0).isActive = true
+    placeholderLabel.trailingAnchor.constraint(equalTo: placeholderView.trailingAnchor, constant: -16.0).isActive = true
+  }
+
+  func addCreateButton() {
+    createButton.translatesAutoresizingMaskIntoConstraints = false
+    createButton.setTitle("Add Account", for: .normal)
+    createButton.backgroundColor = UIColor.iosBlue
+    createButton.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+    createButton.layer.cornerRadius = 8.0
+    createButton.layer.masksToBounds = true
+    createButton.setTitleColor(UIColor.white, for: .normal)
+    placeholderView.addSubview(createButton)
+
+    createButton.centerXAnchor.constraint(equalTo: placeholderView.centerXAnchor).isActive = true
+    createButton.topAnchor.constraint(equalTo: placeholderLabel.bottomAnchor, constant: Defaults.defaultSpacing*4).isActive = true
+    createButton.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    createButton.widthAnchor.constraint(equalToConstant: 120).isActive = true
+
+    createButton.addTarget(self, action: #selector(didTapCreateButton), for: .touchUpInside)
+  }
+
+  func createNameInputAlertView() {
+    let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+    let createAction = UIAlertAction(title: "Add", style: .default) { (alertAction) in
+      let textField = self.nameInputAlert.textFields![0] as UITextField
+      if let name = textField.text {
+        textField.text = ""
+        self.addChatRoom(withName: name)
+      }
+    }
+
+    nameInputAlert.addTextField { (textField) in
+      textField.placeholder = "Enter your name"
+    }
+
+    nameInputAlert.addAction(cancelAction)
+    nameInputAlert.addAction(createAction)
+  }
+
+  @objc func didTapCreateButton() {
+    self.present(nameInputAlert, animated:true, completion: nil)
+  }
+
+  func addChatRoom(withName name: String) {
+    let newChatRoom = ChatRoom(accountName: name, id: chatRooms.count > 0 ? chatRooms.count : 0, browserCookies: [])
+    let realm = try! Realm()
+    try! realm.write {
+      realm.create(ChatRoom.self, value: newChatRoom, update: true)
+    }
+
+    nameInputAlert.dismiss(animated: true, completion: nil)
+    validatePlaceHolderView()
+    self.tableView.reloadData()
+  }
+
+  func initaliseTableView() {
+    view.addSubview(tableView)
+    tableView.translatesAutoresizingMaskIntoConstraints = false
+    tableView.topAnchor.constraint(equalTo: bannerView.bottomAnchor, constant: Defaults.defaultSpacing).isActive = true
+    tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+    tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    tableView.backgroundColor = UIColor.white
+
+    tableView.delegate = self
+    tableView.dataSource = self
+    tableView.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: "ChatRoomTableViewCell")
+  }
 }
 
+extension ChatListViewController: UITableViewDelegate {
+  func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    return "Accounts"
+  }
+
+}
+
+extension ChatListViewController: UITableViewDataSource {
+  func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    return chatRooms.count
+  }
+
+  func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    let cell = tableView.dequeueReusableCell(withIdentifier: "ChatRoomTableViewCell", for: indexPath)
+    cell.textLabel?.text = chatRooms[indexPath.row].name.capitalized
+    cell.accessoryType = .disclosureIndicator
+    return cell
+  }
+}
 
 extension ChatListViewController: GADBannerViewDelegate {
   /// Tells the delegate an ad request loaded an ad.
