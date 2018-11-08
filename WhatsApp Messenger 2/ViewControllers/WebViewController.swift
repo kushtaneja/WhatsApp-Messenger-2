@@ -38,6 +38,7 @@ class WebViewController: UIViewController {
     let config = WKWebViewConfiguration()
     config.userContentController = contentController
 
+
     return WKWebView(frame: .zero, configuration: config)
   }()
 
@@ -61,7 +62,7 @@ class WebViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
 
-    deleteCookieData()
+    self.loadCookieData(fromChatRoom: self.chatRoom)
   }
 
   override func viewDidAppear(_ animated: Bool) {
@@ -100,6 +101,7 @@ class WebViewController: UIViewController {
 
   func setupWebView() {
     webView.customUserAgent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_5) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/48.0.2564.109 Safari/537.36"
+
     view.addSubview(webView)
 
     webView.translatesAutoresizingMaskIntoConstraints = false
@@ -111,27 +113,33 @@ class WebViewController: UIViewController {
   }
 
   func deleteCookieData() {
-//    let dataStore = WKWebsiteDataStore.default()
-//    dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { (records) in
-//      for record in records {
-//        dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record], completionHandler: {
-//          print("Deleted: " + record.displayName);
-//
-//        })
-//      }
-//    }
-   let sharedStorage = HTTPCookieStorage.shared
-
-    for cookie in sharedStorage.cookies! {
-      sharedStorage.deleteCookie(cookie)
+    let dataStore = WKWebsiteDataStore.default()
+    dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { (records) in
+      for record in records {
+        dataStore.removeData(ofTypes: ["WKWebsiteDataTypeCookies", "WKWebsiteDataTypeFetchCache","WKWebsiteDataTypeOfflineWebApplicationCache","WKWebsiteDataTypeSessionStorage","WKWebsiteDataTypeWebSQLDatabases","WKWebsiteDataTypeIndexedDBDatabases"], for: [record], completionHandler: {
+          print("Deleted: " + record.displayName);
+        })
+      }
     }
-    self.loadCookieData(fromChatRoom: self.chatRoom)
+
+
+//    let cookieStore = webView.configuration.websiteDataStore.httpCookieStore
+//
+//    cookieStore.getAllCookies({ (cookies) in
+//      for cookie in cookies {
+//        cookieStore.delete(cookie, completionHandler: ({
+//                  print("Deleted: " + cookie.name);
+//        }))
+//      }
+//    })
+//    webView.configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+
   }
 
   func loadCookieData(fromChatRoom room: ChatRoom) {
       let cookies = getCookies(fromChatRoom: room)
       for cookie in cookies {
-        webView.configuration.websiteDataStore.httpCookieStore.setCookie(cookie) {
+        WKWebsiteDataStore.default().httpCookieStore.setCookie(cookie) {
           print("Loaded: " + cookie.name);
         }
       }
@@ -140,7 +148,8 @@ class WebViewController: UIViewController {
   func saveCookieData(toChatRoom room: ChatRoom) {
     webView.configuration.websiteDataStore.httpCookieStore.getAllCookies({ (cookies) in
      room.saveCookies(browserCookies: cookies)
-      print("Found \(cookies)")
+      print("Saved \(cookies)")
+      self.deleteCookieData()
     })
   }
 
