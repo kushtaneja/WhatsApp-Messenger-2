@@ -18,6 +18,8 @@
 		43E32648218D0F3E0028E666 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E32647218D0F3E0028E666 /* Extensions.swift */; };
 		43E3264C218D21000028E666 /* ChatRoomTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E3264A218D21000028E666 /* ChatRoomTableViewCell.swift */; };
 		43E3264D218D21000028E666 /* ChatRoomTableViewCell.xib in Resources */ = {isa = PBXBuildFile; fileRef = 43E3264B218D21000028E666 /* ChatRoomTableViewCell.xib */; };
+		43E32650218D3C7A0028E666 /* WebViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 43E3264E218D3C7A0028E666 /* WebViewController.swift */; };
+		43E32651218D3C7A0028E666 /* WebViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = 43E3264F218D3C7A0028E666 /* WebViewController.xib */; };
 		6F799EB5C1F7D3A1AD240613 /* Pods_WhatsApp_Messenger_2.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3CEA86C9B8009345882C3747 /* Pods_WhatsApp_Messenger_2.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +38,8 @@
 		43E32647218D0F3E0028E666 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		43E3264A218D21000028E666 /* ChatRoomTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatRoomTableViewCell.swift; sourceTree = "<group>"; };
 		43E3264B218D21000028E666 /* ChatRoomTableViewCell.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = ChatRoomTableViewCell.xib; sourceTree = "<group>"; };
+		43E3264E218D3C7A0028E666 /* WebViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebViewController.swift; sourceTree = "<group>"; };
+		43E3264F218D3C7A0028E666 /* WebViewController.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = WebViewController.xib; sourceTree = "<group>"; };
 		8FFC59789C07725A63A11DF8 /* Pods-WhatsApp Messenger 2.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhatsApp Messenger 2.release.xcconfig"; path = "Pods/Target Support Files/Pods-WhatsApp Messenger 2/Pods-WhatsApp Messenger 2.release.xcconfig"; sourceTree = "<group>"; };
 		F46B540F5A0D65D6907A3BE6 /* Pods-WhatsApp Messenger 2.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WhatsApp Messenger 2.debug.xcconfig"; path = "Pods/Target Support Files/Pods-WhatsApp Messenger 2/Pods-WhatsApp Messenger 2.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -111,6 +115,8 @@
 			children = (
 				43E32643218D0B710028E666 /* ChatListViewController.swift */,
 				43E32644218D0B710028E666 /* ChatListViewController.xib */,
+				43E3264E218D3C7A0028E666 /* WebViewController.swift */,
+				43E3264F218D3C7A0028E666 /* WebViewController.xib */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -225,6 +231,7 @@
 				43E3264D218D21000028E666 /* ChatRoomTableViewCell.xib in Resources */,
 				43E32630218CEEB40028E666 /* LaunchScreen.storyboard in Resources */,
 				43E32640218CFD6F0028E666 /* GoogleService-Info.plist in Resources */,
+				43E32651218D3C7A0028E666 /* WebViewController.xib in Resources */,
 				43E3262D218CEEB40028E666 /* Assets.xcassets in Resources */,
 				43E32646218D0B710028E666 /* ChatListViewController.xib in Resources */,
 			);
@@ -302,6 +309,7 @@
 				43E3262B218CEEAE0028E666 /* WhatsApp_Messenger_2.xcdatamodeld in Sources */,
 				43E32642218D09EC0028E666 /* ChatRoom.swift in Sources */,
 				43E32623218CEEAE0028E666 /* AppDelegate.swift in Sources */,
+				43E32650218D3C7A0028E666 /* WebViewController.swift in Sources */,
 				43E3264C218D21000028E666 /* ChatRoomTableViewCell.swift in Sources */,
 				43E32645218D0B710028E666 /* ChatListViewController.swift in Sources */,
 			);

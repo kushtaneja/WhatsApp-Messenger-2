@@ -14,8 +14,7 @@ fileprivate struct Defaults {
   static let navBarHeight: CGFloat = 140
   static let gADBannerHeight: CGFloat = 100
   static let defaultSpacing: CGFloat = 4.0
-  static let placeholderText: String = "Add as many WhatsApp accounts\n you want. It's simple and free."
-
+  static let placeholderText: String = "Add as many WhatsApp accounts\n you want. \n It's simple and free."
 }
 
 class ChatListViewController: UIViewController {
@@ -79,6 +78,7 @@ class ChatListViewController: UIViewController {
     super.viewDidAppear(animated)
 
     validatePlaceHolderView()
+    self.navigationController?.navigationBar.prefersLargeTitles = true
   }
 
   func addPlaceholderView() {
@@ -93,6 +93,8 @@ class ChatListViewController: UIViewController {
 
     addPlaceholderLabel()
     addCreateButton()
+
+    placeholderView.isHidden = true
   }
 
   func validatePlaceHolderView() {
@@ -201,7 +203,7 @@ class ChatListViewController: UIViewController {
   }
 
   func addChatRoom(withName name: String) {
-    let newChatRoom = ChatRoom(accountName: name, id: chatRooms.count > 0 ? chatRooms.count : 0, browserCookies: [])
+    let newChatRoom = ChatRoom(accountName: name, id: chatRooms.count, browserCookies: [])
     let realm = try! Realm()
     try! realm.write {
       realm.create(ChatRoom.self, value: newChatRoom, update: true)
@@ -221,8 +223,11 @@ class ChatListViewController: UIViewController {
     tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
     tableView.backgroundColor = UIColor.white
 
+
     tableView.delegate = self
     tableView.dataSource = self
+    tableView.isHidden = true
+
     tableView.register(ChatRoomTableViewCell.self, forCellReuseIdentifier: "ChatRoomTableViewCell")
   }
 }
@@ -230,6 +235,35 @@ class ChatListViewController: UIViewController {
 extension ChatListViewController: UITableViewDelegate {
   func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
     return "Accounts"
+  }
+
+  func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    let realm = try! Realm()
+    tableView.deselectRow(at: indexPath, animated: true)
+
+    guard let chatRoom = realm.object(ofType: ChatRoom.self, forPrimaryKey: indexPath.row) else {
+      return
+    }
+    let webVC = WebViewController(nibName: "WebViewController", bundle: nil, room: chatRoom)
+    self.navigationController?.pushViewController(webVC, animated: true)
+  }
+  func tableView(_ tableView: UITableView, trailingSwipeActionsConfigurationForRowAt indexPath: IndexPath) -> UISwipeActionsConfiguration? {
+    let delete = UIContextualAction(style: .destructive, title: "Delete") { (action, sourceView, completionHandler) in
+      let realm = try! Realm()
+      try! realm.write {
+        guard let object = realm.object(ofType: ChatRoom.self, forPrimaryKey: indexPath.row) else {
+          return
+        }
+        realm.delete(object)
+        tableView.deleteRows(at: [indexPath], with: .fade)
+      }
+      tableView.reloadData()
+      self.validatePlaceHolderView()
+      completionHandler(true)
+    }
+    let swipeAction = UISwipeActionsConfiguration(actions: [delete])
+    swipeAction.performsFirstActionWithFullSwipe = true // This is the line which disables full swipe
+    return swipeAction
   }
 
 }
