@@ -60,6 +60,8 @@ class WebViewController: UIViewController {
 
       addBannerView(bannerView: self.bannerView)
       setupWebView()
+
+      HTTPCookieStorage.shared.cookieAcceptPolicy = HTTPCookie.AcceptPolicy.always
     }
 
 
@@ -67,12 +69,11 @@ class WebViewController: UIViewController {
     super.viewDidAppear(animated)
 
     self.navigationController?.navigationBar.prefersLargeTitles = false
+//
+//    let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
+//    cookieStore.add(self)
 
-    let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
-    cookieStore.add(self)
-    self.webView.load(self.request)
-
-    //    self.deleteCookieData()
+    self.deleteCookieData()
   }
 
   override func viewDidDisappear(_ animated: Bool) {
@@ -125,8 +126,20 @@ class WebViewController: UIViewController {
 //        })
 //      }
 //    }
+    let cookieStorage = HTTPCookieStorage.shared
+    if let cookies =  cookieStorage.cookies(for: Defaults.whatsappURL!) {
+      for cookie in cookies {
+        cookieStorage.deleteCookie(cookie)
+        if cookies.last == cookie {
+          self.loadHTTPCookies()
+        }
+      }
+    }
+    else {
+      self.webView.load(self.request)
+    }
 
-
+    /*
     let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
  DispatchQueue.main.async {
     cookieStore.getAllCookies({ (cookies) in
@@ -150,6 +163,16 @@ class WebViewController: UIViewController {
       }
     })
 
+    }
+ */
+  }
+
+  func loadHTTPCookies() {
+    let cookieStorage = HTTPCookieStorage.shared
+    let cookies = self.getCookies(fromChatRoom: self.chatRoom)
+    for cookie in cookies {
+      cookieStorage.setCookie(cookie)
+      webView.reload()
     }
   }
 
