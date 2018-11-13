@@ -39,7 +39,6 @@ class WebViewController: UIViewController {
 
     let config = WKWebViewConfiguration()
     config.userContentController = contentController
-//    config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
 
 
     return WKWebView(frame: .zero, configuration: config)
@@ -69,9 +68,9 @@ class WebViewController: UIViewController {
     super.viewDidAppear(animated)
 
     self.navigationController?.navigationBar.prefersLargeTitles = false
-//
-//    let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
-//    cookieStore.add(self)
+
+    let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
+    cookieStore.add(self)
 
     self.deleteCookieData()
   }
@@ -136,7 +135,7 @@ class WebViewController: UIViewController {
       }
     }
     else {
-      self.webView.load(self.request)
+      self.loadHTTPCookies()
     }
 
     /*
@@ -172,8 +171,8 @@ class WebViewController: UIViewController {
     let cookies = self.getCookies(fromChatRoom: self.chatRoom)
     for cookie in cookies {
       cookieStorage.setCookie(cookie)
-      webView.reload()
     }
+    self.webView.load(self.request)
   }
 
   func loadCookieData(fromChatRoom room: ChatRoom) {

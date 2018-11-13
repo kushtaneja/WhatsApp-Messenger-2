@@ -26,11 +26,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "WhatsApp Messenger 2/ViewControllers/WebViewController.swift"
-            timestampString = "563806072.235217"
+            timestampString = "563807051.043824"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "139"
-            endingLineNumber = "139"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
             landmarkName = "deleteCookieData()"
             landmarkType = "7">
          </BreakpointContent>
@@ -42,45 +42,13 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "WhatsApp Messenger 2/ViewControllers/WebViewController.swift"
-            timestampString = "563806072.235763"
+            timestampString = "563807051.0450161"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "141"
-            endingLineNumber = "141"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
             landmarkName = "deleteCookieData()"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in closure #1 (Swift.Array&lt;__C.NSHTTPCookie&gt;) -&gt; () in closure #1 () -&gt; () in WhatsApp_Messenger_2.WebViewController.deleteCookieData() -&gt; ()"
-                  moduleName = "WhatsApp Messenger 2"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///MyLibrary/Apps/ProjectApps/WhatsApp%20Messenger%202/WhatsApp%20Messenger%202/ViewControllers/WebViewController.swift"
-                  timestampString = "563806072.400822"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "141"
-                  endingLineNumber = "141"
-                  offsetFromSymbolStart = "170">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in closure #1 () -&gt; () in closure #1 (Swift.Array&lt;__C.NSHTTPCookie&gt;) -&gt; () in closure #1 () -&gt; () in WhatsApp_Messenger_2.WebViewController.deleteCookieData() -&gt; ()"
-                  moduleName = "WhatsApp Messenger 2"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///MyLibrary/Apps/ProjectApps/WhatsApp%20Messenger%202/WhatsApp%20Messenger%202/ViewControllers/WebViewController.swift"
-                  timestampString = "563806072.403731"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "142"
-                  endingLineNumber = "142"
-                  offsetFromSymbolStart = "56">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -90,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "WhatsApp Messenger 2/ViewControllers/WebViewController.swift"
-            timestampString = "563806138.135741"
+            timestampString = "563807051.0458"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "206"
-            endingLineNumber = "206"
+            startingLineNumber = "229"
+            endingLineNumber = "229"
             landmarkName = "cookiesDidChange(in:)"
             landmarkType = "7">
          </BreakpointContent>
