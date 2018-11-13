@@ -21,24 +21,13 @@ fileprivate struct Defaults {
 class WebViewController: UIViewController {
 
   var chatRoom: ChatRoom!
+
   var bannerView: GADBannerView! = {
     GADBannerView(adSize: kGADAdSizeSmartBannerPortrait)
   }()
 
-  let request: URLRequest! = {
+  var request: URLRequest! = {
     URLRequest(url: Defaults.whatsappURL!)
-  }()
-
-  var initalWebView: WKWebView! = {
-    let contentController = WKUserContentController()
-    let scriptSource = "document.body.style.zoom = 1;"
-    let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
-    contentController.addUserScript(script)
-
-    let config = WKWebViewConfiguration()
-    config.userContentController = contentController
-
-    return WKWebView(frame: .zero, configuration: config)
   }()
 
 
@@ -50,7 +39,8 @@ class WebViewController: UIViewController {
 
     let config = WKWebViewConfiguration()
     config.userContentController = contentController
-    config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+//    config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+
 
     return WKWebView(frame: .zero, configuration: config)
   }()
@@ -75,7 +65,7 @@ class WebViewController: UIViewController {
   override func viewWillAppear(_ animated: Bool) {
     super.viewWillAppear(animated)
 
-    self.loadCookieData(fromChatRoom: self.chatRoom)
+//    self.loadCookieData(fromChatRoom: self.chatRoom)
   }
 
   override func viewDidAppear(_ animated: Bool) {
@@ -83,13 +73,14 @@ class WebViewController: UIViewController {
 
     self.navigationController?.navigationBar.prefersLargeTitles = false
 
-    if chatRoom.cookies.isEmpty {
-      initalWebView.load(request)
-    }
+    self.deleteCookieData()
+
+//    self.webView.load(request)
   }
 
   override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
+
 
     saveCookieData(toChatRoom: self.chatRoom)
   }
@@ -129,48 +120,62 @@ class WebViewController: UIViewController {
   }
 
   func deleteCookieData() {
-    let dataStore = WKWebsiteDataStore.default()
-    dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { (records) in
-      for record in records {
-        dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record], completionHandler: {
-          print("Deleted: " + record.displayName);
-        })
-      }
-    }
-
-//    let cookieStore = webView.configuration.websiteDataStore.httpCookieStore
-//
-//    cookieStore.getAllCookies({ (cookies) in
-//      for cookie in cookies {
-//        cookieStore.delete(cookie, completionHandler: ({
-//                  print("Deleted: " + cookie.name);
-//        }))
+//    let dataStore = WKWebsiteDataStore.default()
+//    dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { (records) in
+//      for record in records {
+//        dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record], completionHandler: {
+//          print("Deleted: " + record.displayName);
+//        })
 //      }
-//    })
-//    webView.configuration.websiteDataStore = WKWebsiteDataStore.nonPersistent()
+//    }
+
+
+    let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
+
+    cookieStore.getAllCookies({ (cookies) in
+      if cookies.isEmpty {
+         DispatchQueue.main.async {
+          self.webView.load(self.request)
+        }
+        return
+      }
+
+      for cookie in cookies {
+        cookieStore.delete(cookie, completionHandler: ({
+          print("Deleted: " + cookie.name);
+          if cookies.last == cookie {
+            DispatchQueue.main.async {
+              self.loadCookieData(fromChatRoom: self.chatRoom)
+            }
+          }
+        }))
+      }
+    })
 
   }
 
   func loadCookieData(fromChatRoom room: ChatRoom) {
-      let cookies = getCookies(fromChatRoom: room)
+    let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
+      let cookies = self.getCookies(fromChatRoom: room)
       for cookie in cookies {
-        WKWebsiteDataStore.default().httpCookieStore.setCookie(cookie) {
+      DispatchQueue.main.async {
+        cookieStore.setCookie(cookie) {
           print("Loaded: " + cookie.name);
           if cookies.last == cookie {
-            self.webView.load(self.request)
+            DispatchQueue.main.async {
+              self.webView.load(self.request)
+            }
           }
         }
       }
+    }
   }
 
   func saveCookieData(toChatRoom room: ChatRoom) {
-    if chatRoom.cookies.isEmpty {
-      initalWebView.configuration.websiteDataStore.httpCookieStore.getAllCookies({ (cookies) in
+  webView.configuration.websiteDataStore.httpCookieStore.getAllCookies({ (cookies) in
      room.saveCookies(browserCookies: cookies)
       print("Saved \(cookies)")
-      self.deleteCookieData()
     })
-    }
   }
 
 
