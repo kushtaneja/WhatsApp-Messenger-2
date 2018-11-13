@@ -29,7 +29,7 @@ class WebViewController: UIViewController {
     URLRequest(url: Defaults.whatsappURL!)
   }()
 
-  var webView: WKWebView! = {
+  var initalWebView: WKWebView! = {
     let contentController = WKUserContentController()
     let scriptSource = "document.body.style.zoom = 1;"
     let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
@@ -38,6 +38,19 @@ class WebViewController: UIViewController {
     let config = WKWebViewConfiguration()
     config.userContentController = contentController
 
+    return WKWebView(frame: .zero, configuration: config)
+  }()
+
+
+  var webView: WKWebView! = {
+    let contentController = WKUserContentController()
+    let scriptSource = "document.body.style.zoom = 1;"
+    let script = WKUserScript(source: scriptSource, injectionTime: .atDocumentEnd, forMainFrameOnly: true)
+    contentController.addUserScript(script)
+
+    let config = WKWebViewConfiguration()
+    config.userContentController = contentController
+    config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
 
     return WKWebView(frame: .zero, configuration: config)
   }()
@@ -69,7 +82,10 @@ class WebViewController: UIViewController {
     super.viewDidAppear(animated)
 
     self.navigationController?.navigationBar.prefersLargeTitles = false
-    webView.load(request)
+
+    if chatRoom.cookies.isEmpty {
+      initalWebView.load(request)
+    }
   }
 
   override func viewWillDisappear(_ animated: Bool) {
@@ -116,12 +132,11 @@ class WebViewController: UIViewController {
     let dataStore = WKWebsiteDataStore.default()
     dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { (records) in
       for record in records {
-        dataStore.removeData(ofTypes: ["WKWebsiteDataTypeCookies", "WKWebsiteDataTypeFetchCache","WKWebsiteDataTypeOfflineWebApplicationCache","WKWebsiteDataTypeSessionStorage","WKWebsiteDataTypeWebSQLDatabases","WKWebsiteDataTypeIndexedDBDatabases"], for: [record], completionHandler: {
+        dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record], completionHandler: {
           print("Deleted: " + record.displayName);
         })
       }
     }
-
 
 //    let cookieStore = webView.configuration.websiteDataStore.httpCookieStore
 //
@@ -141,16 +156,21 @@ class WebViewController: UIViewController {
       for cookie in cookies {
         WKWebsiteDataStore.default().httpCookieStore.setCookie(cookie) {
           print("Loaded: " + cookie.name);
+          if cookies.last == cookie {
+            self.webView.load(self.request)
+          }
         }
       }
   }
 
   func saveCookieData(toChatRoom room: ChatRoom) {
-    webView.configuration.websiteDataStore.httpCookieStore.getAllCookies({ (cookies) in
+    if chatRoom.cookies.isEmpty {
+      initalWebView.configuration.websiteDataStore.httpCookieStore.getAllCookies({ (cookies) in
      room.saveCookies(browserCookies: cookies)
       print("Saved \(cookies)")
       self.deleteCookieData()
     })
+    }
   }
 
 

@@ -26,22 +26,6 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "WhatsApp Messenger 2/ViewControllers/WebViewController.swift"
-            timestampString = "563368667.426036"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
-            landmarkName = "init(nibName:bundle:room:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "WhatsApp Messenger 2/ViewControllers/WebViewController.swift"
             timestampString = "563368667.42721"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
@@ -49,54 +33,6 @@
             endingLineNumber = "159"
             landmarkName = "getCookies(fromChatRoom:)"
             landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "WhatsApp Messenger 2/ViewControllers/WebViewController.swift"
-            timestampString = "563368667.427803"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "119"
-            endingLineNumber = "119"
-            landmarkName = "deleteCookieData()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Array&lt;__C.WKWebsiteDataRecord&gt;) -&gt; () in WhatsApp_Messenger_2.WebViewController.deleteCookieData() -&gt; ()"
-                  moduleName = "WhatsApp Messenger 2"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///MyLibrary/Apps/ProjectApps/WhatsApp%20Messenger%202/WhatsApp%20Messenger%202/ViewControllers/WebViewController.swift"
-                  timestampString = "563368588.768171"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "119"
-                  endingLineNumber = "119"
-                  offsetFromSymbolStart = "259">
-               </Location>
-               <Location
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 () -&gt; () in closure #1 (Swift.Array&lt;__C.WKWebsiteDataRecord&gt;) -&gt; () in WhatsApp_Messenger_2.WebViewController.deleteCookieData() -&gt; ()"
-                  moduleName = "WhatsApp Messenger 2"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///MyLibrary/Apps/ProjectApps/WhatsApp%20Messenger%202/WhatsApp%20Messenger%202/ViewControllers/WebViewController.swift"
-                  timestampString = "563368588.771718"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "120"
-                  endingLineNumber = "120"
-                  offsetFromSymbolStart = "23">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
