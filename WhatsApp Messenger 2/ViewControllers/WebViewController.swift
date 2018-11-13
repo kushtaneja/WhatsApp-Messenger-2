@@ -62,27 +62,24 @@ class WebViewController: UIViewController {
       setupWebView()
     }
 
-  override func viewWillAppear(_ animated: Bool) {
-    super.viewWillAppear(animated)
-
-//    self.loadCookieData(fromChatRoom: self.chatRoom)
-  }
 
   override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
 
     self.navigationController?.navigationBar.prefersLargeTitles = false
 
-    self.deleteCookieData()
+    let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
+    cookieStore.add(self)
+    self.webView.load(self.request)
 
-//    self.webView.load(request)
+    //    self.deleteCookieData()
   }
 
-  override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
+  override func viewDidDisappear(_ animated: Bool) {
+    super.viewDidDisappear(animated)
 
-
-    saveCookieData(toChatRoom: self.chatRoom)
+    let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
+    cookieStore.remove(self)
   }
 
   func addBannerView(bannerView: GADBannerView) {
@@ -131,16 +128,16 @@ class WebViewController: UIViewController {
 
 
     let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
-
+ DispatchQueue.main.async {
     cookieStore.getAllCookies({ (cookies) in
-      if cookies.isEmpty {
-         DispatchQueue.main.async {
-          self.webView.load(self.request)
-        }
-        return
-      }
-
+//      if cookies.isEmpty {
+//         DispatchQueue.main.async {
+//          self.webView.load(self.request)
+//        }
+//        return
+//      }
       for cookie in cookies {
+        DispatchQueue.main.async {
         cookieStore.delete(cookie, completionHandler: ({
           print("Deleted: " + cookie.name);
           if cookies.last == cookie {
@@ -149,9 +146,11 @@ class WebViewController: UIViewController {
             }
           }
         }))
+        }
       }
     })
 
+    }
   }
 
   func loadCookieData(fromChatRoom room: ChatRoom) {
@@ -169,13 +168,6 @@ class WebViewController: UIViewController {
         }
       }
     }
-  }
-
-  func saveCookieData(toChatRoom room: ChatRoom) {
-  webView.configuration.websiteDataStore.httpCookieStore.getAllCookies({ (cookies) in
-     room.saveCookies(browserCookies: cookies)
-      print("Saved \(cookies)")
-    })
   }
 
 
@@ -205,6 +197,20 @@ class WebViewController: UIViewController {
 
 }
 
+extension WebViewController: WKHTTPCookieStoreObserver {
+  public func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
+
+    DispatchQueue.main.async {
+      cookieStore.getAllCookies({ (cookies) in
+        print("\(cookies) changes")
+          if !cookies.isEmpty {
+            self.chatRoom.saveCookies(browserCookies: cookies)
+            print("Saved \(cookies)")
+          }
+    })
+    }
+  }
+}
 
 
   extension WebViewController: GADBannerViewDelegate {
