@@ -11,7 +11,6 @@ import UIKit
 import SafariServices
 
 extension UIStoryboard {
-
   class func MainStoryboard() -> UIStoryboard {
     return UIStoryboard(name: "Main", bundle: Bundle.main)
   }
@@ -19,7 +18,6 @@ extension UIStoryboard {
 
 // URL
 extension URL {
-
   enum Error: Swift.Error {
     case failedToCreateURL
   }

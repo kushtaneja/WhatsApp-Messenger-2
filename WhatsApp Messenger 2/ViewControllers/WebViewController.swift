@@ -39,7 +39,7 @@ class WebViewController: UIViewController {
 
     let config = WKWebViewConfiguration()
     config.userContentController = contentController
-
+    config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
 
     return WKWebView(frame: .zero, configuration: config)
   }()
@@ -72,7 +72,8 @@ class WebViewController: UIViewController {
     let cookieStore =  webView.configuration.websiteDataStore.httpCookieStore
     cookieStore.add(self)
 
-    self.deleteCookieData()
+    self.webView.load(self.request)
+//    self.deleteCookieData()
   }
 
   override func viewDidDisappear(_ animated: Bool) {
@@ -122,11 +123,14 @@ class WebViewController: UIViewController {
 //      for record in records {
 //        dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record], completionHandler: {
 //          print("Deleted: " + record.displayName);
+//
+//          self.loadHTTPCookies()
 //        })
 //      }
 //    }
+
     let cookieStorage = HTTPCookieStorage.shared
-    if let cookies =  cookieStorage.cookies(for: Defaults.whatsappURL!) {
+    if let cookies =  cookieStorage.cookies(for: Defaults.whatsappURL!), !cookies.isEmpty {
       for cookie in cookies {
         cookieStorage.deleteCookie(cookie)
         if cookies.last == cookie {
@@ -184,7 +188,7 @@ class WebViewController: UIViewController {
           print("Loaded: " + cookie.name);
           if cookies.last == cookie {
             DispatchQueue.main.async {
-              self.webView.load(self.request)
+              self.webView.reload()
             }
           }
         }
@@ -221,14 +225,58 @@ class WebViewController: UIViewController {
 
 extension WebViewController: WKHTTPCookieStoreObserver {
   public func cookiesDidChange(in cookieStore: WKHTTPCookieStore) {
-
     DispatchQueue.main.async {
       cookieStore.getAllCookies({ (cookies) in
-        print("\(cookies) changes")
-          if !cookies.isEmpty {
-            self.chatRoom.saveCookies(browserCookies: cookies)
-            print("Saved \(cookies)")
+
+        let isLocalEmpty = UserDefaults.standard.value(forKey: "isLocalEmpty") as? Bool
+
+        if !cookies.isEmpty {
+          if isLocalEmpty == nil {
+            DispatchQueue.main.async {
+              self.chatRoom.saveCookies(browserCookies: cookies)
+              print("Saved \(cookies)")
+            }
+
+            UserDefaults.standard.set(false, forKey: "isLocalEmpty")
           }
+          else if isLocalEmpty == true {
+            DispatchQueue.main.async {
+              self.chatRoom.saveCookies(browserCookies: cookies)
+              print("Saved \(cookies)")
+            }
+
+            UserDefaults.standard.set(false, forKey: "isLocalEmpty")
+          }
+          else {
+            let dataStore = WKWebsiteDataStore.default()
+            dataStore.fetchDataRecords(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes()) { (records) in
+              for record in records {
+                dataStore.removeData(ofTypes: WKWebsiteDataStore.allWebsiteDataTypes(), for: [record], completionHandler: {
+
+                  print("Deleted: " + record.displayName);
+                  if record == records.last {
+                    let chatCookies = self.getCookies(fromChatRoom: self.chatRoom)
+                    if !chatCookies.isEmpty {
+                      for chatCookie in chatCookies {
+                        DispatchQueue.main.async {
+                          cookieStore.setCookie(chatCookie) {
+                            UserDefaults.standard.set(false, forKey: "isLocalEmpty")
+                            print("Loaded: " + chatCookie.name);
+                          }
+                        }
+                      }
+                    }
+                    else {
+                      UserDefaults.standard.set(true, forKey: "isLocalEmpty")
+                    }
+
+                  }
+                })
+              }
+            }
+
+          }
+        }
     })
     }
   }
