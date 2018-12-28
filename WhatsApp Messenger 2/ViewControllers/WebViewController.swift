@@ -41,7 +41,6 @@ class WebViewController: UIViewController {
 
     let config = WKWebViewConfiguration()
     config.userContentController = contentController
-    config.websiteDataStore = WKWebsiteDataStore.nonPersistent()
 
     return WKWebView(frame: .zero, configuration: config)
   }()
@@ -68,16 +67,15 @@ class WebViewController: UIViewController {
     super.viewDidAppear(animated)
 
     self.navigationController?.navigationBar.prefersLargeTitles = false
-
-
-//    self.webView.load(self.request)
+    self.webView.load(self.request)
   }
 
   override func viewDidDisappear(_ animated: Bool) {
     super.viewDidDisappear(animated)
-    self.saveDump()
 
+    self.saveDump()
   }
+
 
   func addBannerView(bannerView: GADBannerView) {
     bannerView.translatesAutoresizingMaskIntoConstraints = false
@@ -117,35 +115,33 @@ class WebViewController: UIViewController {
 
 
   func saveDump() {
-    webView.evaluateJavaScript("dump = {};for (i=0;i<localStorage.length;i++){dump[localStorage.key(i)]=localStorage.getItem(localStorage.key(i))}; console.log(JSON.stringify(dump);") { (result, error) in
-      print(result!)
+    webView.evaluateJavaScript("dump = {};for (i=0;i<localStorage.length;i++){dump[localStorage.key(i)]=localStorage.getItem(localStorage.key(i))}; b=JSON.stringify(dump);localStorage.clear();b") { (result, error) in
 
       let realm = try! Realm()
       try! realm.write {
         self.chatRoom.localStorageDump = result as? String
       }
-      self.deleteDump()
     }
   }
 
-  func deleteDump() {
-    webView.evaluateJavaScript("localStorage.clear();") { (result, error) in
-      print("localStorage cleared!!!")
-    }
-  }
-}
-
-extension WebViewController: WKNavigationDelegate {
-  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+  func loadStorage() {
     guard let dump = self.chatRoom.localStorageDump else {
       self.webView.load(self.request)
       return
     }
 
-    webView.evaluateJavaScript("a=JSON.parse('\(dump)');for (key in a){localStorage.setItem(key,a[key]);}") { (result, error) in
+    webView.evaluateJavaScript("a=\(dump);for (key in a){localStorage.setItem(key,a[key]);}") { (result, error) in
 
       self.webView.load(self.request)
     }
+
+  }
+}
+
+extension WebViewController: WKNavigationDelegate {
+  func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    self.webView.navigationDelegate = nil
+    self.loadStorage()
   }
 
 }
