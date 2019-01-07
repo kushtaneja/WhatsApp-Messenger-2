@@ -203,7 +203,7 @@ class ChatListViewController: UIViewController {
   }
 
   func addChatRoom(withName name: String) {
-    let newChatRoom = ChatRoom(accountName: name, id: chatRooms.count, browserCookies: [])
+    let newChatRoom = ChatRoom(accountName: name, id: chatRooms.count)
     let realm = try! Realm()
     try! realm.write {
       realm.create(ChatRoom.self, value: newChatRoom, update: true)
